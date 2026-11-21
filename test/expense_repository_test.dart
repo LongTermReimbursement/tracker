@@ -21,6 +21,7 @@ void main() {
         date: DateTime(2026, 1, 1),
         amountCents: 1250,
         category: ExpenseCategory.meals,
+        merchant: ' Trattoria ',
         notes: '  lunch  ',
       ),
     );
@@ -29,6 +30,7 @@ void main() {
         date: DateTime(2026, 2, 1),
         amountCents: 3000,
         category: ExpenseCategory.grocery,
+        merchant: '  ',
         notes: '   ',
       ),
     );
@@ -40,6 +42,7 @@ void main() {
       ExpenseCategory.grocery,
       ExpenseCategory.meals,
     ]);
+    expect(list.map((e) => e.merchant), [null, 'Trattoria']);
     expect(list.map((e) => e.notes), [null, 'lunch']);
   });
 

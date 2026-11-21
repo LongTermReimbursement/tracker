@@ -17,6 +17,7 @@ class AddExpenseScreen extends ConsumerStatefulWidget {
 class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
   final _formKey = GlobalKey<FormState>();
   final _amount = TextEditingController();
+  final _merchant = TextEditingController();
   final _notes = TextEditingController();
   DateTime _date = DateUtils.dateOnly(DateTime.now());
   ExpenseCategory _category = ExpenseCategory.meals;
@@ -25,6 +26,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
   @override
   void dispose() {
     _amount.dispose();
+    _merchant.dispose();
     _notes.dispose();
     super.dispose();
   }
@@ -53,6 +55,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
               date: _date,
               amountCents: parseAmountCents(_amount.text)!,
               category: _category,
+              merchant: _merchant.text,
               notes: _notes.text,
             ),
           );
@@ -125,6 +128,15 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                   ),
               ],
               onChanged: (c) => setState(() => _category = c ?? _category),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _merchant,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: InputDecoration(
+                labelText: l10n.merchantLabel,
+                border: const OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 16),
             TextFormField(

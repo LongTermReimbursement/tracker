@@ -6,6 +6,7 @@ class Expense {
     required this.date,
     required this.amountCents,
     required this.category,
+    this.merchant,
     this.notes,
   });
 
@@ -13,6 +14,7 @@ class Expense {
   final DateTime date;
   final int amountCents;
   final ExpenseCategory category;
+  final String? merchant;
   final String? notes;
 }
 

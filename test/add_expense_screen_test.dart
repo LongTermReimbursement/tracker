@@ -47,11 +47,19 @@ void main() {
     expect(find.text('Enter the amount'), findsOneWidget);
 
     await tester.enterText(find.byType(TextFormField).first, '12,50');
+    await tester.enterText(find.byType(TextFormField).at(1), 'Trattoria');
     await tester.enterText(find.byType(TextFormField).last, 'Lunch');
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
 
     expect(find.textContaining('12,50'), findsOneWidget);
+    expect(find.text('Trattoria'), findsOneWidget);
     expect(find.textContaining('Lunch'), findsOneWidget);
+
+    await tester.tap(find.text('Trattoria'));
+    await tester.pumpAndSettle();
+    expect(find.text('Expense Details'), findsOneWidget);
+    expect(find.text('12,50 €'), findsOneWidget);
+    expect(find.text('Lunch'), findsOneWidget);
   });
 }

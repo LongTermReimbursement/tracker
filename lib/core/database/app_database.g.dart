@@ -53,6 +53,17 @@ class $ExpensesTable extends Expenses
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _merchantMeta = const VerificationMeta(
+    'merchant',
+  );
+  @override
+  late final GeneratedColumn<String> merchant = GeneratedColumn<String>(
+    'merchant',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   @override
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
@@ -80,6 +91,7 @@ class $ExpensesTable extends Expenses
     date,
     amountCents,
     category,
+    merchant,
     notes,
     createdAt,
   ];
@@ -125,6 +137,12 @@ class $ExpensesTable extends Expenses
     } else if (isInserting) {
       context.missing(_categoryMeta);
     }
+    if (data.containsKey('merchant')) {
+      context.handle(
+        _merchantMeta,
+        merchant.isAcceptableOrUnknown(data['merchant']!, _merchantMeta),
+      );
+    }
     if (data.containsKey('notes')) {
       context.handle(
         _notesMeta,
@@ -162,6 +180,10 @@ class $ExpensesTable extends Expenses
         DriftSqlType.string,
         data['${effectivePrefix}category'],
       )!,
+      merchant: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}merchant'],
+      ),
       notes: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
@@ -184,6 +206,7 @@ class ExpenseRow extends DataClass implements Insertable<ExpenseRow> {
   final DateTime date;
   final int amountCents;
   final String category;
+  final String? merchant;
   final String? notes;
   final DateTime createdAt;
   const ExpenseRow({
@@ -191,6 +214,7 @@ class ExpenseRow extends DataClass implements Insertable<ExpenseRow> {
     required this.date,
     required this.amountCents,
     required this.category,
+    this.merchant,
     this.notes,
     required this.createdAt,
   });
@@ -201,6 +225,9 @@ class ExpenseRow extends DataClass implements Insertable<ExpenseRow> {
     map['date'] = Variable<DateTime>(date);
     map['amount_cents'] = Variable<int>(amountCents);
     map['category'] = Variable<String>(category);
+    if (!nullToAbsent || merchant != null) {
+      map['merchant'] = Variable<String>(merchant);
+    }
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
@@ -214,6 +241,9 @@ class ExpenseRow extends DataClass implements Insertable<ExpenseRow> {
       date: Value(date),
       amountCents: Value(amountCents),
       category: Value(category),
+      merchant: merchant == null && nullToAbsent
+          ? const Value.absent()
+          : Value(merchant),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
@@ -231,6 +261,7 @@ class ExpenseRow extends DataClass implements Insertable<ExpenseRow> {
       date: serializer.fromJson<DateTime>(json['date']),
       amountCents: serializer.fromJson<int>(json['amountCents']),
       category: serializer.fromJson<String>(json['category']),
+      merchant: serializer.fromJson<String?>(json['merchant']),
       notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
@@ -243,6 +274,7 @@ class ExpenseRow extends DataClass implements Insertable<ExpenseRow> {
       'date': serializer.toJson<DateTime>(date),
       'amountCents': serializer.toJson<int>(amountCents),
       'category': serializer.toJson<String>(category),
+      'merchant': serializer.toJson<String?>(merchant),
       'notes': serializer.toJson<String?>(notes),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
@@ -253,6 +285,7 @@ class ExpenseRow extends DataClass implements Insertable<ExpenseRow> {
     DateTime? date,
     int? amountCents,
     String? category,
+    Value<String?> merchant = const Value.absent(),
     Value<String?> notes = const Value.absent(),
     DateTime? createdAt,
   }) => ExpenseRow(
@@ -260,6 +293,7 @@ class ExpenseRow extends DataClass implements Insertable<ExpenseRow> {
     date: date ?? this.date,
     amountCents: amountCents ?? this.amountCents,
     category: category ?? this.category,
+    merchant: merchant.present ? merchant.value : this.merchant,
     notes: notes.present ? notes.value : this.notes,
     createdAt: createdAt ?? this.createdAt,
   );
@@ -271,6 +305,7 @@ class ExpenseRow extends DataClass implements Insertable<ExpenseRow> {
           ? data.amountCents.value
           : this.amountCents,
       category: data.category.present ? data.category.value : this.category,
+      merchant: data.merchant.present ? data.merchant.value : this.merchant,
       notes: data.notes.present ? data.notes.value : this.notes,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
@@ -283,6 +318,7 @@ class ExpenseRow extends DataClass implements Insertable<ExpenseRow> {
           ..write('date: $date, ')
           ..write('amountCents: $amountCents, ')
           ..write('category: $category, ')
+          ..write('merchant: $merchant, ')
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
@@ -291,7 +327,7 @@ class ExpenseRow extends DataClass implements Insertable<ExpenseRow> {
 
   @override
   int get hashCode =>
-      Object.hash(id, date, amountCents, category, notes, createdAt);
+      Object.hash(id, date, amountCents, category, merchant, notes, createdAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -300,6 +336,7 @@ class ExpenseRow extends DataClass implements Insertable<ExpenseRow> {
           other.date == this.date &&
           other.amountCents == this.amountCents &&
           other.category == this.category &&
+          other.merchant == this.merchant &&
           other.notes == this.notes &&
           other.createdAt == this.createdAt);
 }
@@ -309,6 +346,7 @@ class ExpensesCompanion extends UpdateCompanion<ExpenseRow> {
   final Value<DateTime> date;
   final Value<int> amountCents;
   final Value<String> category;
+  final Value<String?> merchant;
   final Value<String?> notes;
   final Value<DateTime> createdAt;
   const ExpensesCompanion({
@@ -316,6 +354,7 @@ class ExpensesCompanion extends UpdateCompanion<ExpenseRow> {
     this.date = const Value.absent(),
     this.amountCents = const Value.absent(),
     this.category = const Value.absent(),
+    this.merchant = const Value.absent(),
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
@@ -324,6 +363,7 @@ class ExpensesCompanion extends UpdateCompanion<ExpenseRow> {
     required DateTime date,
     required int amountCents,
     required String category,
+    this.merchant = const Value.absent(),
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
   }) : date = Value(date),
@@ -334,6 +374,7 @@ class ExpensesCompanion extends UpdateCompanion<ExpenseRow> {
     Expression<DateTime>? date,
     Expression<int>? amountCents,
     Expression<String>? category,
+    Expression<String>? merchant,
     Expression<String>? notes,
     Expression<DateTime>? createdAt,
   }) {
@@ -342,6 +383,7 @@ class ExpensesCompanion extends UpdateCompanion<ExpenseRow> {
       if (date != null) 'date': date,
       if (amountCents != null) 'amount_cents': amountCents,
       if (category != null) 'category': category,
+      if (merchant != null) 'merchant': merchant,
       if (notes != null) 'notes': notes,
       if (createdAt != null) 'created_at': createdAt,
     });
@@ -352,6 +394,7 @@ class ExpensesCompanion extends UpdateCompanion<ExpenseRow> {
     Value<DateTime>? date,
     Value<int>? amountCents,
     Value<String>? category,
+    Value<String?>? merchant,
     Value<String?>? notes,
     Value<DateTime>? createdAt,
   }) {
@@ -360,6 +403,7 @@ class ExpensesCompanion extends UpdateCompanion<ExpenseRow> {
       date: date ?? this.date,
       amountCents: amountCents ?? this.amountCents,
       category: category ?? this.category,
+      merchant: merchant ?? this.merchant,
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
     );
@@ -380,6 +424,9 @@ class ExpensesCompanion extends UpdateCompanion<ExpenseRow> {
     if (category.present) {
       map['category'] = Variable<String>(category.value);
     }
+    if (merchant.present) {
+      map['merchant'] = Variable<String>(merchant.value);
+    }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
@@ -396,6 +443,7 @@ class ExpensesCompanion extends UpdateCompanion<ExpenseRow> {
           ..write('date: $date, ')
           ..write('amountCents: $amountCents, ')
           ..write('category: $category, ')
+          ..write('merchant: $merchant, ')
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
@@ -419,6 +467,7 @@ typedef $$ExpensesTableCreateCompanionBuilder = ExpensesCompanion Function({
   required DateTime date,
   required int amountCents,
   required String category,
+  Value<String?> merchant,
   Value<String?> notes,
   Value<DateTime> createdAt,
 });
@@ -427,6 +476,7 @@ typedef $$ExpensesTableUpdateCompanionBuilder = ExpensesCompanion Function({
   Value<DateTime> date,
   Value<int> amountCents,
   Value<String> category,
+  Value<String?> merchant,
   Value<String?> notes,
   Value<DateTime> createdAt,
 });
@@ -457,6 +507,11 @@ class $$ExpensesTableFilterComposer
 
   ColumnFilters<String> get category => $composableBuilder(
     column: $table.category,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get merchant => $composableBuilder(
+    column: $table.merchant,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -500,6 +555,11 @@ class $$ExpensesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get merchant => $composableBuilder(
+    column: $table.merchant,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get notes => $composableBuilder(
     column: $table.notes,
     builder: (column) => ColumnOrderings(column),
@@ -533,6 +593,9 @@ class $$ExpensesTableAnnotationComposer
 
   GeneratedColumn<String> get category =>
       $composableBuilder(column: $table.category, builder: (column) => column);
+
+  GeneratedColumn<String> get merchant =>
+      $composableBuilder(column: $table.merchant, builder: (column) => column);
 
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
@@ -576,6 +639,7 @@ class $$ExpensesTableTableManager
                 Value<DateTime> date = const Value.absent(),
                 Value<int> amountCents = const Value.absent(),
                 Value<String> category = const Value.absent(),
+                Value<String?> merchant = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => ExpensesCompanion(
@@ -583,6 +647,7 @@ class $$ExpensesTableTableManager
                 date: date,
                 amountCents: amountCents,
                 category: category,
+                merchant: merchant,
                 notes: notes,
                 createdAt: createdAt,
               ),
@@ -592,6 +657,7 @@ class $$ExpensesTableTableManager
                 required DateTime date,
                 required int amountCents,
                 required String category,
+                Value<String?> merchant = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => ExpensesCompanion.insert(
@@ -599,6 +665,7 @@ class $$ExpensesTableTableManager
                 date: date,
                 amountCents: amountCents,
                 category: category,
+                merchant: merchant,
                 notes: notes,
                 createdAt: createdAt,
               ),

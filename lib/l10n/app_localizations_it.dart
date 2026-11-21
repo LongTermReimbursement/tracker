@@ -35,6 +35,18 @@ class AppLocalizationsIt extends AppLocalizations {
   String get categoryLabel => 'Categoria';
 
   @override
+  String get merchantLabel => 'Esercente (facoltativo)';
+
+  @override
+  String get detailsTitle => 'Dettagli Spesa';
+
+  @override
+  String get merchantField => 'Esercente';
+
+  @override
+  String get notesField => 'Note';
+
+  @override
   String get notesLabel => 'Note (facoltative)';
 
   @override

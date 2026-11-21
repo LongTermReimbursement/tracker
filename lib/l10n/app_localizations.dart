@@ -146,6 +146,30 @@ abstract class AppLocalizations {
   /// **'Categoria'**
   String get categoryLabel;
 
+  /// No description provided for @merchantLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Esercente (facoltativo)'**
+  String get merchantLabel;
+
+  /// No description provided for @detailsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Dettagli Spesa'**
+  String get detailsTitle;
+
+  /// No description provided for @merchantField.
+  ///
+  /// In it, this message translates to:
+  /// **'Esercente'**
+  String get merchantField;
+
+  /// No description provided for @notesField.
+  ///
+  /// In it, this message translates to:
+  /// **'Note'**
+  String get notesField;
+
   /// No description provided for @notesLabel.
   ///
   /// In it, this message translates to:

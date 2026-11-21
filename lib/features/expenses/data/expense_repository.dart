@@ -18,7 +18,6 @@ class ExpenseRepository {
   }
 
   Future<void> add(Expense expense) {
-    final notes = expense.notes?.trim();
     return _db
         .into(_db.expenses)
         .insert(
@@ -26,9 +25,15 @@ class ExpenseRepository {
             date: expense.date,
             amountCents: expense.amountCents,
             category: expense.category.name,
-            notes: Value(notes == null || notes.isEmpty ? null : notes),
+            merchant: Value(_blankToNull(expense.merchant)),
+            notes: Value(_blankToNull(expense.notes)),
           ),
         );
+  }
+
+  String? _blankToNull(String? text) {
+    final trimmed = text?.trim();
+    return trimmed == null || trimmed.isEmpty ? null : trimmed;
   }
 
   Expense _toExpense(ExpenseRow r) => Expense(
@@ -36,6 +41,7 @@ class ExpenseRepository {
     date: r.date,
     amountCents: r.amountCents,
     category: ExpenseCategory.values.byName(r.category),
+    merchant: r.merchant,
     notes: r.notes,
   );
 }

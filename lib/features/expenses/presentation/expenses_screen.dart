@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/l10n/l10n.dart';
 import '../domain/expense.dart';
 import 'add_expense_screen.dart';
+import 'expense_details_screen.dart';
 import 'expenses_providers.dart';
 
 class ExpensesScreen extends ConsumerWidget {
@@ -58,18 +59,27 @@ class _ExpenseTile extends StatelessWidget {
     final locale = Localizations.localeOf(context).toString();
     final date = DateFormat.yMMMd(locale).format(expense.date);
     final notes = expense.notes;
+    final merchant = expense.merchant;
+    final category = l10n.categoryLabelFor(expense.category);
+    final subtitle = [merchant == null ? date : '$category · $date', ?notes];
     return ListTile(
       leading: Icon(switch (expense.category) {
         ExpenseCategory.meals => Icons.restaurant,
         ExpenseCategory.grocery => Icons.shopping_basket,
       }),
-      title: Text(l10n.categoryLabelFor(expense.category)),
+      title: Text(merchant ?? category),
       subtitle: Text(
-        notes == null ? date : '$date\n$notes',
+        subtitle.join('\n'),
         maxLines: 3,
         overflow: TextOverflow.ellipsis,
       ),
-      isThreeLine: notes != null,
+      isThreeLine: subtitle.length > 1,
+      onTap:
+          () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => ExpenseDetailsScreen(expense),
+            ),
+          ),
       trailing: Text(
         formatCents(expense.amountCents),
         style: Theme.of(context).textTheme.titleMedium,

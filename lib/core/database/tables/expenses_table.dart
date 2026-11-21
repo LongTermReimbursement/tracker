@@ -8,6 +8,7 @@ class Expenses extends Table {
   IntColumn get amountCents => integer()();
   // ExpenseCategory.name
   TextColumn get category => text()();
+  TextColumn get merchant => text().nullable()();
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
