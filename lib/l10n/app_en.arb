@@ -1,0 +1,19 @@
+{
+  "@@locale": "en",
+  "appTitle": "Reimbursements",
+  "expensesTitle": "My Expenses",
+  "expensesEmpty": "No expenses yet.\nTap + to add one!",
+  "expensesLoadError": "Unable to load expenses.",
+  "addExpenseTitle": "New Expense",
+  "dateLabel": "Purchase date",
+  "amountLabel": "Total amount",
+  "categoryLabel": "Category",
+  "notesLabel": "Notes (optional)",
+  "categoryMeals": "Meals",
+  "categoryGrocery": "Grocery shop",
+  "save": "Save",
+  "amountRequired": "Enter the amount",
+  "amountInvalid": "Invalid amount",
+  "expenseSaved": "Expense saved",
+  "actionFailed": "Something went wrong"
+}

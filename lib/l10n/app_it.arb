@@ -1,0 +1,19 @@
+{
+  "@@locale": "it",
+  "appTitle": "Rimborsi",
+  "expensesTitle": "Le Mie Spese",
+  "expensesEmpty": "Nessuna spesa registrata.\nTocca + per aggiungerne una!",
+  "expensesLoadError": "Impossibile caricare le spese.",
+  "addExpenseTitle": "Nuova Spesa",
+  "dateLabel": "Data dell'acquisto",
+  "amountLabel": "Importo totale",
+  "categoryLabel": "Categoria",
+  "notesLabel": "Note (facoltative)",
+  "categoryMeals": "Pasti",
+  "categoryGrocery": "Spesa",
+  "save": "Salva",
+  "amountRequired": "Inserisci l'importo",
+  "amountInvalid": "Importo non valido",
+  "expenseSaved": "Spesa salvata",
+  "actionFailed": "Qualcosa è andato storto"
+}
