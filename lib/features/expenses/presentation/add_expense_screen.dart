@@ -8,7 +8,10 @@ import '../domain/expense.dart';
 import 'expenses_providers.dart';
 
 class AddExpenseScreen extends ConsumerStatefulWidget {
-  const AddExpenseScreen({super.key});
+  const AddExpenseScreen({super.key, this.expense});
+
+  /// When set, the screen edits this expense instead of creating a new one.
+  final Expense? expense;
 
   @override
   ConsumerState<AddExpenseScreen> createState() => _AddExpenseScreenState();
@@ -16,11 +19,17 @@ class AddExpenseScreen extends ConsumerStatefulWidget {
 
 class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _amount = TextEditingController();
-  final _merchant = TextEditingController();
-  final _notes = TextEditingController();
-  DateTime _date = DateUtils.dateOnly(DateTime.now());
-  ExpenseCategory _category = ExpenseCategory.meals;
+  late final _amount = TextEditingController(
+    text: widget.expense == null
+        ? null
+        : formatCents(widget.expense!.amountCents).replaceAll(' €', ''),
+  );
+  late final _merchant = TextEditingController(text: widget.expense?.merchant);
+  late final _notes = TextEditingController(text: widget.expense?.notes);
+  late DateTime _date =
+      widget.expense?.date ?? DateUtils.dateOnly(DateTime.now());
+  late ExpenseCategory _category =
+      widget.expense?.category ?? ExpenseCategory.meals;
   bool _saving = false;
 
   @override
@@ -48,19 +57,22 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
     final l10n = context.l10n;
     setState(() => _saving = true);
     try {
-      await ref
-          .read(expenseRepositoryProvider)
-          .add(
-            Expense(
-              date: _date,
-              amountCents: parseAmountCents(_amount.text)!,
-              category: _category,
-              merchant: _merchant.text,
-              notes: _notes.text,
-            ),
-          );
+      final expense = Expense(
+        id: widget.expense?.id,
+        date: _date,
+        amountCents: parseAmountCents(_amount.text)!,
+        category: _category,
+        merchant: _merchant.text,
+        notes: _notes.text,
+      );
+      final repository = ref.read(expenseRepositoryProvider);
+      if (widget.expense == null) {
+        await repository.add(expense);
+      } else {
+        await repository.update(expense);
+      }
       messenger.showSnackBar(SnackBar(content: Text(l10n.expenseSaved)));
-      navigator.pop();
+      navigator.pop(true);
     } catch (_) {
       if (!mounted) return;
       setState(() => _saving = false);
@@ -73,7 +85,11 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
     final l10n = context.l10n;
     final locale = Localizations.localeOf(context).toString();
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.addExpenseTitle)),
+      appBar: AppBar(
+        title: Text(
+          widget.expense == null ? l10n.addExpenseTitle : l10n.editExpenseTitle,
+        ),
+      ),
       body: Form(
         key: _formKey,
         child: ListView(

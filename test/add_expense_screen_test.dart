@@ -24,6 +24,19 @@ class _FakeRepository implements ExpenseRepository {
     _items.insert(0, expense);
     _controller.add(List.of(_items));
   }
+
+  @override
+  Future<void> delete(int id) async {
+    _items.removeWhere((e) => e.id == id);
+    _controller.add(List.of(_items));
+  }
+
+  @override
+  Future<void> update(Expense expense) async {
+    final i = _items.indexWhere((e) => e.id == expense.id);
+    if (i >= 0) _items[i] = expense;
+    _controller.add(List.of(_items));
+  }
 }
 
 void main() {

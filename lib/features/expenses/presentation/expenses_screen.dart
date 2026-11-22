@@ -17,31 +17,28 @@ class ExpensesScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.expensesTitle)),
       body: expenses.when(
-        data:
-            (list) =>
-                list.isEmpty
-                    ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Text(
-                          context.l10n.expensesEmpty,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    )
-                    : ListView.separated(
-                      itemCount: list.length,
-                      separatorBuilder: (_, _) => const Divider(height: 1),
-                      itemBuilder: (_, i) => _ExpenseTile(list[i]),
-                    ),
+        data: (list) => list.isEmpty
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(
+                    context.l10n.expensesEmpty,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              )
+            : ListView.separated(
+                itemCount: list.length,
+                separatorBuilder: (_, _) => const Divider(height: 1),
+                itemBuilder: (_, i) => _ExpenseTile(list[i]),
+              ),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, _) => Center(child: Text(context.l10n.expensesLoadError)),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed:
-            () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const AddExpenseScreen()),
-            ),
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const AddExpenseScreen()),
+        ),
         child: const Icon(Icons.add),
       ),
     );
@@ -74,12 +71,9 @@ class _ExpenseTile extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       ),
       isThreeLine: subtitle.length > 1,
-      onTap:
-          () => Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (_) => ExpenseDetailsScreen(expense),
-            ),
-          ),
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => ExpenseDetailsScreen(expense)),
+      ),
       trailing: Text(
         formatCents(expense.amountCents),
         style: Theme.of(context).textTheme.titleMedium,

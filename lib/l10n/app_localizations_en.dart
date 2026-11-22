@@ -25,6 +25,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addExpenseTitle => 'New Expense';
 
   @override
+  String get editExpenseTitle => 'Edit Expense';
+
+  @override
+  String get editTooltip => 'Edit';
+
+  @override
+  String get deleteTooltip => 'Delete';
+
+  @override
+  String get deleteConfirmTitle => 'Delete expense?';
+
+  @override
+  String get deleteConfirmMessage => 'This action cannot be undone.';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get expenseDeleted => 'Expense deleted';
+
+  @override
   String get dateLabel => 'Purchase date';
 
   @override

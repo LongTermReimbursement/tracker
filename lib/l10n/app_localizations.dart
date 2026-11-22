@@ -128,6 +128,48 @@ abstract class AppLocalizations {
   /// **'Nuova Spesa'**
   String get addExpenseTitle;
 
+  /// No description provided for @editExpenseTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica Spesa'**
+  String get editExpenseTitle;
+
+  /// No description provided for @editTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica'**
+  String get editTooltip;
+
+  /// No description provided for @deleteTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina'**
+  String get deleteTooltip;
+
+  /// No description provided for @deleteConfirmTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Eliminare la spesa?'**
+  String get deleteConfirmTitle;
+
+  /// No description provided for @deleteConfirmMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa azione non può essere annullata.'**
+  String get deleteConfirmMessage;
+
+  /// No description provided for @cancel.
+  ///
+  /// In it, this message translates to:
+  /// **'Annulla'**
+  String get cancel;
+
+  /// No description provided for @expenseDeleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Spesa eliminata'**
+  String get expenseDeleted;
+
   /// No description provided for @dateLabel.
   ///
   /// In it, this message translates to:

@@ -26,6 +26,27 @@ class AppLocalizationsIt extends AppLocalizations {
   String get addExpenseTitle => 'Nuova Spesa';
 
   @override
+  String get editExpenseTitle => 'Modifica Spesa';
+
+  @override
+  String get editTooltip => 'Modifica';
+
+  @override
+  String get deleteTooltip => 'Elimina';
+
+  @override
+  String get deleteConfirmTitle => 'Eliminare la spesa?';
+
+  @override
+  String get deleteConfirmMessage => 'Questa azione non può essere annullata.';
+
+  @override
+  String get cancel => 'Annulla';
+
+  @override
+  String get expenseDeleted => 'Spesa eliminata';
+
+  @override
   String get dateLabel => 'Data dell\'acquisto';
 
   @override

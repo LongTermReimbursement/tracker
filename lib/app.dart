@@ -13,11 +13,10 @@ class App extends StatelessWidget {
       onGenerateTitle: (context) => context.l10n.appTitle,
       localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      localeResolutionCallback:
-          (locale, supported) => supported.firstWhere(
-            (l) => l.languageCode == locale?.languageCode,
-            orElse: () => const Locale('it'),
-          ),
+      localeResolutionCallback: (locale, supported) => supported.firstWhere(
+        (l) => l.languageCode == locale?.languageCode,
+        orElse: () => const Locale('it'),
+      ),
       themeMode: ThemeMode.system,
       theme: _buildTheme(Brightness.light),
       darkTheme: _buildTheme(Brightness.dark),

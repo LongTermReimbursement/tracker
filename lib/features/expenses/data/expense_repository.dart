@@ -31,6 +31,24 @@ class ExpenseRepository {
         );
   }
 
+  Future<void> update(Expense expense) {
+    return (_db.update(
+      _db.expenses,
+    )..where((t) => t.id.equals(expense.id!))).write(
+      ExpensesCompanion(
+        date: Value(expense.date),
+        amountCents: Value(expense.amountCents),
+        category: Value(expense.category.name),
+        merchant: Value(_blankToNull(expense.merchant)),
+        notes: Value(_blankToNull(expense.notes)),
+      ),
+    );
+  }
+
+  Future<void> delete(int id) {
+    return (_db.delete(_db.expenses)..where((t) => t.id.equals(id))).go();
+  }
+
   String? _blankToNull(String? text) {
     final trimmed = text?.trim();
     return trimmed == null || trimmed.isEmpty ? null : trimmed;
