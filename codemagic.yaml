@@ -1,0 +1,207 @@
+workflows:
+  ios-build:
+    name: iOS Build & Release
+    instance_type: mac_mini_m1
+    max_build_duration: 60
+    
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      vars:
+        FLUTTER_VERSION: "3.24.0"
+    
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch:
+        patterns:
+          - main
+          - develop
+      cancel_previous_builds: true
+    
+    scripts:
+      - name: Set up Flutter
+        script: |
+          flutter pub get
+          flutter clean
+      
+      - name: Run tests
+        script: |
+          flutter test
+      
+      - name: Build iOS (debug)
+        script: |
+          flutter build ios \
+            --debug \
+            --no-codesign
+      
+      - name: Build iOS (release)
+        script: |
+          flutter build ios \
+            --release \
+            --no-codesign
+    
+    artifacts:
+      - build/ios/iphoneos/Runner.app
+      - flutter_drive.log
+
+  ios-release:
+    name: iOS Release (Signed)
+    instance_type: mac_mini_m1
+    max_build_duration: 60
+    
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      vars:
+        FLUTTER_VERSION: "3.24.0"
+    
+    triggering:
+      events:
+        - tag
+      tag:
+        patterns:
+          - pattern: 'v*'
+            include: true
+    
+    scripts:
+      - name: Set up Flutter
+        script: |
+          flutter pub get
+          flutter clean
+      
+      - name: Run tests
+        script: |
+          flutter test
+      
+      - name: Set up code signing
+        script: |
+          # Codemagic automatically handles code signing
+          # Just configure in Codemagic UI or use provisioning profiles
+          echo "Code signing configured by Codemagic"
+      
+      - name: Build iOS release
+        script: |
+          flutter build ios \
+            --release \
+            --export-options-plist=ios/Runner/ExportOptions.plist
+      
+      - name: Create IPA
+        script: |
+          cd build/ios/iphoneos
+          mkdir -p Payload
+          mv Runner.app Payload/
+          zip -r -y ../../../app.ipa Payload
+          cd ../../../
+      
+      - name: Create build directory for artifacts
+        script: |
+          mkdir -p ipa-build
+          cp app.ipa ipa-build/app.ipa
+    
+    artifacts:
+      - ipa-build/app.ipa
+      - build/ios/iphoneos/Runner.app
+
+  ios-testflight:
+    name: iOS TestFlight Release
+    instance_type: mac_mini_m1
+    max_build_duration: 60
+    
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      vars:
+        FLUTTER_VERSION: "3.24.0"
+        # Set these in Codemagic UI:
+        # APP_STORE_CONNECT_ISSUER_ID
+        # APP_STORE_CONNECT_KEY_ID
+        # APP_STORE_CONNECT_PRIVATE_KEY (as base64)
+    
+    triggering:
+      events:
+        - tag
+      tag:
+        patterns:
+          - pattern: 'v*'
+            include: true
+    
+    scripts:
+      - name: Set up Flutter
+        script: |
+          flutter pub get
+          flutter clean
+      
+      - name: Run tests
+        script: |
+          flutter test
+      
+      - name: Build iOS release
+        script: |
+          flutter build ios \
+            --release \
+            --export-options-plist=ios/Runner/ExportOptions.plist
+      
+      - name: Create IPA
+        script: |
+          cd build/ios/iphoneos
+          mkdir -p Payload
+          mv Runner.app Payload/
+          zip -r -y ../../../app.ipa Payload
+          cd ../../../
+      
+      - name: Upload to TestFlight
+        script: |
+          # Requires Codemagic paid plan or manual App Store Connect setup
+          # For now, manual upload: download IPA and upload to TestFlight
+          echo "IPA built: app.ipa"
+          echo "To upload to TestFlight:"
+          echo "1. Download app.ipa from Codemagic"
+          echo "2. Use Transporter or App Store Connect"
+    
+    artifacts:
+      - app.ipa
+      - build/ios/iphoneos/Runner.app
+
+  # Optional: Android build via Codemagic (not recommended - use GitHub Actions)
+  # Uncomment if you want to also build Android here
+  # android-build:
+  #   name: Android Build
+  #   instance_type: linux_x2
+  #   max_build_duration: 60
+  #   
+  #   environment:
+  #     flutter: stable
+  #     java: default
+  #     vars:
+  #       FLUTTER_VERSION: "3.24.0"
+  #   
+  #   triggering:
+  #     events:
+  #       - push
+  #       - pull_request
+  #     branch:
+  #       patterns:
+  #         - main
+  #         - develop
+  #   
+  #   scripts:
+  #     - name: Set up Flutter
+  #       script: |
+  #         flutter pub get
+  #         flutter clean
+  #     
+  #     - name: Run tests
+  #       script: |
+  #         flutter test
+  #     
+  #     - name: Build APK
+  #       script: |
+  #         flutter build apk --release
+  #   
+  #   artifacts:
+  #     - build/app/outputs/flutter-apk/app-release.apk

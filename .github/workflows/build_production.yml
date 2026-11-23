@@ -1,0 +1,77 @@
+name: Build Release (Android only)
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+# Note: Signed iOS IPA is built by Codemagic
+# This workflow handles Android APK signing only
+
+jobs:
+  build_signed_apk:
+    name: Build Signed APK
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+    
+    - name: Get dependencies
+      run: flutter pub get
+    
+    - name: Decode signing key
+      run: |
+        echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/key.jks
+    
+    - name: Create key.properties
+      run: |
+        cat > android/key.properties << EOF
+        storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+        keyPassword=${{ secrets.KEY_PASSWORD }}
+        keyAlias=${{ secrets.KEY_ALIAS }}
+        storeFile=key.jks
+        EOF
+    
+    - name: Build signed APK
+      run: flutter build apk --release
+    
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: signed-apk
+        path: build/app/outputs/flutter-apk/app-release.apk
+
+  create_github_release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: build_signed_apk
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download APK
+      uses: actions/download-artifact@v3
+      with:
+        name: signed-apk
+        path: build-artifacts
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: build-artifacts/*
+        generate_release_notes: true
+        body: |
+          ## Download
+
+          - **Android APK**: Built by GitHub Actions
+          - **iOS IPA**: Built by Codemagic (see releases in Codemagic dashboard)
+          
+          See [CODEMAGIC.md](../../blob/main/.github/CODEMAGIC.md) for iOS build details.
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
