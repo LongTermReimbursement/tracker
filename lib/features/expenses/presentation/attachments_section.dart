@@ -58,7 +58,7 @@ class AttachmentsSection extends ConsumerWidget {
                   children: [for (final a in items) _Thumbnail(a)],
                 ),
           loading: () => const LinearProgressIndicator(),
-          error: (_, _) => Text(l10n.actionFailed),
+          error: (error, stackTrace) => Text(l10n.actionFailed),
         ),
       ],
     );
@@ -84,7 +84,7 @@ class _Thumbnail extends StatelessWidget {
           height: 96,
           fit: BoxFit.cover,
           cacheWidth: 192,
-          errorBuilder: (_, _, _) => const SizedBox(
+          errorBuilder: (context, error, stackTrace) => const SizedBox(
             width: 96,
             height: 96,
             child: Icon(Icons.broken_image),

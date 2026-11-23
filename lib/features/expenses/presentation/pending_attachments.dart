@@ -57,7 +57,7 @@ class PendingAttachments extends StatelessWidget {
                         height: 96,
                         fit: BoxFit.cover,
                         cacheWidth: 192,
-                        errorBuilder: (_, _, _) => const SizedBox(
+                        errorBuilder: (context, error, stackTrace) => const SizedBox(
                           width: 96,
                           height: 96,
                           child: Icon(Icons.broken_image),

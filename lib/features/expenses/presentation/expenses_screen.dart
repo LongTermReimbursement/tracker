@@ -29,11 +29,11 @@ class ExpensesScreen extends ConsumerWidget {
               )
             : ListView.separated(
                 itemCount: list.length,
-                separatorBuilder: (_, _) => const Divider(height: 1),
-                itemBuilder: (_, i) => _ExpenseTile(list[i]),
+                separatorBuilder: (context, index) => const Divider(height: 1),
+                itemBuilder: (context, index) => _ExpenseTile(list[index]),
               ),
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, _) => Center(child: Text(context.l10n.expensesLoadError)),
+        error: (error, stackTrace) => Center(child: Text(context.l10n.expensesLoadError)),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.of(context).push(

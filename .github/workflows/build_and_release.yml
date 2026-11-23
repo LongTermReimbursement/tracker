@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [ main, develop ]
 
-# Note: iOS builds are handled by Codemagic (see CODEMAGIC.md)
-# This workflow handles Android APK builds only
-
 jobs:
   test:
     name: Test
@@ -20,7 +17,6 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.24.0'
         channel: 'stable'
     
     - name: Get dependencies
@@ -43,7 +39,6 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.24.0'
         channel: 'stable'
     
     - name: Get dependencies
