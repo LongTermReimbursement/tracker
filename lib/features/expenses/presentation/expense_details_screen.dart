@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/l10n/l10n.dart';
 import '../domain/expense.dart';
 import 'add_expense_screen.dart';
+import 'attachments_section.dart';
 import 'expenses_providers.dart';
 
 class ExpenseDetailsScreen extends ConsumerWidget {
@@ -35,6 +36,7 @@ class ExpenseDetailsScreen extends ConsumerWidget {
     );
     if (confirmed != true) return;
     try {
+      await ref.read(attachmentRepositoryProvider).deleteAllFor(expense.id!);
       await ref.read(expenseRepositoryProvider).delete(expense.id!);
       messenger.showSnackBar(SnackBar(content: Text(l10n.expenseDeleted)));
       navigator.pop();
@@ -86,6 +88,8 @@ class ExpenseDetailsScreen extends ConsumerWidget {
           _Field(l10n.categoryLabel, l10n.categoryLabelFor(expense.category)),
           _Field(l10n.merchantField, expense.merchant),
           _Field(l10n.notesField, expense.notes),
+          const SizedBox(height: 8),
+          AttachmentsSection(expense.id!),
         ],
       ),
     );

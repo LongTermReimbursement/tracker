@@ -1,17 +1,18 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 
+import 'tables/attachments_table.dart';
 import 'tables/expenses_table.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Expenses])
+@DriftDatabase(tables: [Expenses, Attachments])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor])
     : super(executor ?? driftDatabase(name: 'tracker'));
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -23,6 +24,7 @@ class AppDatabase extends _$AppDatabase {
         // Version 2 called the column "place".
         await m.renameColumn(expenses, 'place', expenses.merchant);
       }
+      if (from < 4) await m.createTable(attachments);
     },
   );
 }

@@ -6,6 +6,8 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/l10n/l10n.dart';
 import '../domain/expense.dart';
 import 'expenses_providers.dart';
+import 'attachments_section.dart';
+import 'pending_attachments.dart';
 
 class AddExpenseScreen extends ConsumerStatefulWidget {
   const AddExpenseScreen({super.key, this.expense});
@@ -31,6 +33,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
   late ExpenseCategory _category =
       widget.expense?.category ?? ExpenseCategory.meals;
   bool _saving = false;
+  List<String> _pendingAttachments = [];
 
   @override
   void dispose() {
@@ -67,7 +70,11 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
       );
       final repository = ref.read(expenseRepositoryProvider);
       if (widget.expense == null) {
-        await repository.add(expense);
+        final id = await repository.add(expense);
+        final attachments = ref.read(attachmentRepositoryProvider);
+        for (final path in _pendingAttachments) {
+          await attachments.add(id, path);
+        }
       } else {
         await repository.update(expense);
       }
@@ -165,6 +172,15 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                 border: const OutlineInputBorder(),
               ),
             ),
+            const SizedBox(height: 16),
+            if (widget.expense == null)
+              PendingAttachments(
+                paths: _pendingAttachments,
+                onChanged: (paths) =>
+                    setState(() => _pendingAttachments = paths),
+              )
+            else
+              AttachmentsSection(widget.expense!.id!),
             const SizedBox(height: 24),
             FilledButton(
               onPressed: _saving ? null : _save,

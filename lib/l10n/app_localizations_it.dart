@@ -35,6 +35,24 @@ class AppLocalizationsIt extends AppLocalizations {
   String get deleteTooltip => 'Elimina';
 
   @override
+  String get attachmentsTitle => 'Allegati';
+
+  @override
+  String get addAttachment => 'Aggiungi';
+
+  @override
+  String get noAttachments => 'Nessun allegato.';
+
+  @override
+  String get takePhoto => 'Scatta una foto';
+
+  @override
+  String get chooseFromGallery => 'Scegli dalla galleria';
+
+  @override
+  String get deleteAttachmentTitle => 'Eliminare l\'allegato?';
+
+  @override
   String get deleteConfirmTitle => 'Eliminare la spesa?';
 
   @override

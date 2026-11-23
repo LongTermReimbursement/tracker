@@ -20,9 +20,21 @@ class _FakeRepository implements ExpenseRepository {
   }
 
   @override
-  Future<void> add(Expense expense) async {
-    _items.insert(0, expense);
+  Future<int> add(Expense expense) async {
+    final id = _items.length + 1;
+    _items.insert(
+      0,
+      Expense(
+        id: id,
+        date: expense.date,
+        amountCents: expense.amountCents,
+        category: expense.category,
+        merchant: expense.merchant,
+        notes: expense.notes,
+      ),
+    );
     _controller.add(List.of(_items));
+    return id;
   }
 
   @override
@@ -45,7 +57,10 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [expenseRepositoryProvider.overrideWithValue(repo)],
+        overrides: [
+          expenseRepositoryProvider.overrideWithValue(repo),
+          attachmentsProvider.overrideWith((ref, id) => Stream.value([])),
+        ],
         child: const App(),
       ),
     );

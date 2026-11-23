@@ -17,7 +17,7 @@ class ExpenseRepository {
     return query.watch().map((rows) => rows.map(_toExpense).toList());
   }
 
-  Future<void> add(Expense expense) {
+  Future<int> add(Expense expense) {
     return _db
         .into(_db.expenses)
         .insert(

@@ -146,6 +146,42 @@ abstract class AppLocalizations {
   /// **'Elimina'**
   String get deleteTooltip;
 
+  /// No description provided for @attachmentsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Allegati'**
+  String get attachmentsTitle;
+
+  /// No description provided for @addAttachment.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi'**
+  String get addAttachment;
+
+  /// No description provided for @noAttachments.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun allegato.'**
+  String get noAttachments;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In it, this message translates to:
+  /// **'Scatta una foto'**
+  String get takePhoto;
+
+  /// No description provided for @chooseFromGallery.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli dalla galleria'**
+  String get chooseFromGallery;
+
+  /// No description provided for @deleteAttachmentTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Eliminare l\'allegato?'**
+  String get deleteAttachmentTitle;
+
   /// No description provided for @deleteConfirmTitle.
   ///
   /// In it, this message translates to:
