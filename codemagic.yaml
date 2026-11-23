@@ -13,10 +13,6 @@ workflows:
       events:
         - push
         - pull_request
-      branch:
-        patterns:
-          - main
-          - develop
       cancel_previous_builds: true
     
     scripts:
@@ -58,10 +54,9 @@ workflows:
     triggering:
       events:
         - tag
-      tag:
-        patterns:
-          - pattern: 'v*'
-            include: true
+      tag_patterns:
+        - pattern: 'v*'
+          include: true
     
     scripts:
       - name: Set up Flutter
@@ -75,8 +70,6 @@ workflows:
       
       - name: Set up code signing
         script: |
-          # Codemagic automatically handles code signing
-          # Just configure in Codemagic UI or use provisioning profiles
           echo "Code signing configured by Codemagic"
       
       - name: Build iOS release
@@ -115,10 +108,9 @@ workflows:
     triggering:
       events:
         - tag
-      tag:
-        patterns:
-          - pattern: 'v*'
-            include: true
+      tag_patterns:
+        - pattern: 'v*'
+          include: true
     
     scripts:
       - name: Set up Flutter
@@ -146,8 +138,6 @@ workflows:
       
       - name: Upload to TestFlight
         script: |
-          # Requires Codemagic paid plan or manual App Store Connect setup
-          # For now, manual upload: download IPA and upload to TestFlight
           echo "IPA built: app.ipa"
           echo "To upload to TestFlight:"
           echo "1. Download app.ipa from Codemagic"
