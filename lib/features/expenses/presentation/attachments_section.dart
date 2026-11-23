@@ -55,7 +55,14 @@ class AttachmentsSection extends ConsumerWidget {
               : Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: [for (final a in items) _Thumbnail(a)],
+                  children: [
+                    for (int i = 0; i < items.length; i++)
+                      _Thumbnail(
+                        attachment: items[i],
+                        attachments: items,
+                        index: i,
+                      )
+                  ],
                 ),
           loading: () => const LinearProgressIndicator(),
           error: (error, stackTrace) => Text(l10n.actionFailed),
@@ -65,17 +72,21 @@ class AttachmentsSection extends ConsumerWidget {
   }
 }
 
-class _Thumbnail extends StatelessWidget {
-  const _Thumbnail(this.attachment);
+class _Thumbnail extends ConsumerWidget {
+  const _Thumbnail({
+    required this.attachment,
+    required this.attachments,
+    required this.index,
+  });
 
   final Attachment attachment;
+  final List<Attachment> attachments;
+  final int index;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return InkWell(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => AttachmentViewerScreen(attachment)),
-      ),
+      onTap: () => showAttachmentViewer(context, ref, attachments, index),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: Image.file(
